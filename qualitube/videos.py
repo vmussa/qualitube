@@ -4,12 +4,17 @@ import json
 import pandas as pd
 from configparser import ConfigParser
 import sys
+import logging
 
 config = ConfigParser()
 config.read("config.ini")
 API_KEY = config['credentials']['api_key']
 
 class Videos:
+    """
+    Wrapper Class to the YouTube Data API v3's `Videos` endpoint with
+    extra functionalities.
+    """
     def __init__(self, videos_ids, api_key=API_KEY):
         self.videos_ids = videos_ids
         self.api_key = api_key
@@ -45,6 +50,7 @@ class Videos:
                 'video_favorite_count': item['statistics']['favoriteCount'],
                 'video_comment_count': self._try_parse(item['statistics'], 'commentCount')
             })
+            logging.info(f"Got Video -> id: {item['id']} title: {item['snippet']['title']}")
 
         try:
             next_page_token = raw["nextPageToken"]

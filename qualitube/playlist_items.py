@@ -2,12 +2,17 @@ import requests
 import json
 import pandas as pd
 from configparser import ConfigParser
+import logging
 
 config = ConfigParser()
 config.read("config.ini")
 API_KEY = config['credentials']['api_key']
 
 class PlaylistItems:
+    """
+    Wrapper class to the YouTube Data API v3's `PlaylistItems` endpoint
+    with extra functionality.
+    """
     def __init__(self, playlist_id, api_key=API_KEY):
         self.playlist_id = playlist_id
         self.api_key = api_key
@@ -26,6 +31,7 @@ class PlaylistItems:
                 'description': item['snippet']['description'],
                 'published_at': item['snippet']['publishedAt']
             })
+            logging.info(f"Got PlaylistItem -> id: {item['id']} / title: {item['snippet']['title']}")
         try:
             next_page_token = raw["nextPageToken"]
         except KeyError:
@@ -63,6 +69,7 @@ class PlaylistItems:
 
         return videos_data
     
-    def to_csv(self):
-        df = pd.DataFrame(self.get_playlist_items_data())
-        df.to_csv(f'{self.playlist_id}.csv', index=False)
+    def to_df(self):
+        data = self.get_playlist_items_data()
+        df = pd.DataFrame(data)
+        return df
