@@ -1,6 +1,4 @@
 *.csv
-*.json
-parse.py
-testes.py
 config.ini
 .vscode
+__pycache__
