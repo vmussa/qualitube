@@ -19,7 +19,7 @@ def chunks(lst: list, n) -> list:
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
 
-if __name__ == "__main__":
+def main():
     logging.basicConfig(
         level=logging.INFO,
         handlers=[
@@ -44,3 +44,6 @@ if __name__ == "__main__":
     df.to_csv('corpus.csv', index=False)
 
     logging.info('End of pipeline.')
+
+if __name__ == "__main__":
+    main()
