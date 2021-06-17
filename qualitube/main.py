@@ -1,6 +1,6 @@
-from playlist_items import PlaylistItems
+from .playlist_items import PlaylistItems
 from configparser import ConfigParser
-from videos import Videos
+from .videos import Videos
 import pandas as pd
 import logging
 import sys

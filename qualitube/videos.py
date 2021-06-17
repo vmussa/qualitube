@@ -1,4 +1,3 @@
-from channel import API_KEY
 import requests
 import json
 import pandas as pd
