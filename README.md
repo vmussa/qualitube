@@ -29,4 +29,4 @@ Inside this folder and with your `qualitube` virtual environment activated, simp
 qualitube
 ```
 
-You should see the pipeline logging messages. Your qualitative data should be in a `csv` file name `corpus.csv`. You can check if the pipeline has runned succesfully by looking at the `pipeline.log` generated log file too.
+You should see the pipeline logging messages. Your qualitative data should be in a `csv` file named `corpus.csv`. You can check if the pipeline has runned succesfully by looking at the `pipeline.log` generated log file too.
