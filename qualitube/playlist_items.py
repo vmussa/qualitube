@@ -3,10 +3,13 @@ import json
 import pandas as pd
 from configparser import ConfigParser
 import logging
+from .exceptions import QualitubeException
+
 
 config = ConfigParser()
 config.read("config.ini")
 API_KEY = config['credentials']['api_key']
+
 
 class PlaylistItems:
     """
@@ -21,7 +24,17 @@ class PlaylistItems:
         """Parses the API 'PlaylistItems: list' endpoint's JSON
         response for the retrieval of video metadata."""
         raw = json.loads(data)
-        items = raw["items"]
+        
+        try:
+            items = raw["items"]
+        except KeyError:
+            if "error" in raw.keys():
+                raise QualitubeException(
+                    f"\nAre you sure you set qualitube's config.ini file correctly?"
+                    f"\nYou are getting the following error from YouTube's API response:"
+                    f"\n\t{raw}"
+                )
+            raise
 
         parsed = []
         for item in items:
