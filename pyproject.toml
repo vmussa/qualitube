@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qualitube"
-version = "0.1.0"
+version = "0.1.2"
 description = "A Python package for YouTube qualitative data analysis"
 authors = ["Vitor Mussa <vtrmussa@gmail.com>"]
 license = "MIT"

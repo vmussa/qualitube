@@ -2,12 +2,14 @@ import requests
 import json
 import pandas as pd
 from configparser import ConfigParser
-import sys
 import logging
+from .exceptions import QualitubeException
+
 
 config = ConfigParser()
 config.read("config.ini")
 API_KEY = config['credentials']['api_key']
+
 
 class Videos:
     """
@@ -22,6 +24,10 @@ class Videos:
         try:
             parsed = item[key]
         except KeyError:
+            logging.warn(
+                f"YouTube Data API v3 does not provide the `{key}` parameter fo"
+                f"r the requested video. Setting it as `None`"
+            )
             parsed = None
         return parsed
 
@@ -29,24 +35,29 @@ class Videos:
         raw = json.loads(data)
         try:
             items = raw['items']
-        except KeyError as e:
-            print(raw)
-            sys.exit(e)
+        except KeyError:
+            if "error" in raw.keys():
+                raise QualitubeException(
+                    f"\nAre you sure you set qualitube's config.ini file correctly?"
+                    f"\nYou are getting the following error from YouTube's API response:"
+                    f"\n\t{raw}"
+                )
+            raise
 
         parsed = []
         for item in items:
             parsed.append({
-                'channel_id': item['snippet']['channelId'],
-                'channel_title': item['snippet']['channelTitle'],
-                'video_id': item['id'],
-                'video_title': item['snippet']['title'],
-                'video_description': item['snippet']['description'],
+                'channel_id': self._try_parse(item['snippet']['channelId']),
+                'channel_title': self._try_parse(item['snippet']['channelTitle']),
+                'video_id': self._try_parse(item['id']),
+                'video_title': self._try_parse(item['snippet']['title']),
+                'video_description': self._try_parse(item['snippet']['description']),
                 'video_tags': self._try_parse(item['snippet'], 'tags'),
-                'video_published_at': item['snippet']['publishedAt'],
-                'video_view_count': item['statistics']['viewCount'],
-                'video_like_count': item['statistics']['likeCount'],
-                'video_dislike_count': item['statistics']['dislikeCount'],
-                'video_favorite_count': item['statistics']['favoriteCount'],
+                'video_published_at': self._try_parse(item['snippet']['publishedAt']),
+                'video_view_count': self._try_parse(item['statistics']['viewCount']),
+                'video_like_count': self._try_parse(item['statistics']['likeCount']),
+                'video_dislike_count': self._try_parse(item['statistics']['dislikeCount']),
+                'video_favorite_count': self._try_parse(item['statistics']['favoriteCount']),
                 'video_comment_count': self._try_parse(item['statistics'], 'commentCount')
             })
             logging.info(f"Got Video -> id: {item['id']} title: {item['snippet']['title']}")
