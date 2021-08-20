@@ -50,10 +50,10 @@ class PlaylistItems:
         parsed = []
         for item in items:
             parsed.append({
-                'id': self._try_parse(item['contentDetails']['videoId']),
-                'title': self._try_parse(item['snippet']['title']),
-                'description': self._try_parse(item['snippet']['description']),
-                'published_at': self._try_parse(item['snippet']['publishedAt'])
+                'id': self._try_parse(item['contentDetails'], 'videoId'),
+                'title': self._try_parse(item['snippet'], 'title'),
+                'description': self._try_parse(item['snippet'], 'description'),
+                'published_at': self._try_parse(item['snippet'], 'publishedAt')
             })
             logging.info(f"Got PlaylistItem -> id: {item['id']} / title: {item['snippet']['title']}")
         try:

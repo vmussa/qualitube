@@ -47,17 +47,17 @@ class Videos:
         parsed = []
         for item in items:
             parsed.append({
-                'channel_id': self._try_parse(item['snippet']['channelId']),
-                'channel_title': self._try_parse(item['snippet']['channelTitle']),
-                'video_id': self._try_parse(item['id']),
-                'video_title': self._try_parse(item['snippet']['title']),
-                'video_description': self._try_parse(item['snippet']['description']),
+                'channel_id': self._try_parse(item['snippet'], 'channelId'),
+                'channel_title': self._try_parse(item['snippet'], 'channelTitle'),
+                'video_id': self._try_parse(item, 'id'),
+                'video_title': self._try_parse(item['snippet'], 'title'),
+                'video_description': self._try_parse(item['snippet'], 'description'),
                 'video_tags': self._try_parse(item['snippet'], 'tags'),
-                'video_published_at': self._try_parse(item['snippet']['publishedAt']),
-                'video_view_count': self._try_parse(item['statistics']['viewCount']),
-                'video_like_count': self._try_parse(item['statistics']['likeCount']),
-                'video_dislike_count': self._try_parse(item['statistics']['dislikeCount']),
-                'video_favorite_count': self._try_parse(item['statistics']['favoriteCount']),
+                'video_published_at': self._try_parse(item['snippet'], 'publishedAt'),
+                'video_view_count': self._try_parse(item['statistics'], 'viewCount'),
+                'video_like_count': self._try_parse(item['statistics'], 'likeCount'),
+                'video_dislike_count': self._try_parse(item['statistics'], 'dislikeCount'),
+                'video_favorite_count': self._try_parse(item['statistics'], 'favoriteCount'),
                 'video_comment_count': self._try_parse(item['statistics'], 'commentCount')
             })
             logging.info(f"Got Video -> id: {item['id']} title: {item['snippet']['title']}")
