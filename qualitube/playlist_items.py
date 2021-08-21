@@ -2,7 +2,7 @@ import requests
 import json
 import pandas as pd
 from configparser import ConfigParser
-import logging
+from .log import logger
 from .exceptions import QualitubeException
 
 
@@ -24,7 +24,7 @@ class PlaylistItems:
         try:
             parsed = item[key]
         except KeyError:
-            logging.warn(
+            logger.warn(
                 f"YouTube Data API v3 does not provide the `{key}` parameter fo"
                 f"r the requested playlist item. Setting it as `None`"
             )
@@ -55,7 +55,7 @@ class PlaylistItems:
                 'description': self._try_parse(item['snippet'], 'description'),
                 'published_at': self._try_parse(item['snippet'], 'publishedAt')
             })
-            logging.info(f"Got PlaylistItem -> id: {item['id']} / title: {item['snippet']['title']}")
+            logger.info(f"Got PlaylistItem -> id: {item['id']} / title: {item['snippet']['title']}")
         try:
             next_page_token = raw["nextPageToken"]
         except KeyError:

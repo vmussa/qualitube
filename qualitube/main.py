@@ -2,7 +2,7 @@ from .playlist_items import PlaylistItems
 from configparser import ConfigParser
 from .videos import Videos
 import pandas as pd
-import logging
+from .log import logger
 import sys
 
 config = ConfigParser()
@@ -20,15 +20,8 @@ def chunks(lst: list, n) -> list:
         yield lst[i:i + n]
 
 def main():
-    logging.basicConfig(
-        level=logging.INFO,
-        handlers=[
-            logging.FileHandler('pipeline.log'),
-            logging.StreamHandler(sys.stdout)
-        ]
-    )
-
-    logging.info('Beginning of pipeline.')
+    """Main function."""
+    logger.info('Beginning of pipeline.')
 
     playlists = get_playlist_items_objs(channel_ids=CHANNEL_IDS)
     dfs = [playlist.to_df() for playlist in playlists]
@@ -43,7 +36,7 @@ def main():
     df = pd.concat(dfs).reset_index(drop=True)
     df.to_csv('corpus.csv', index=False)
 
-    logging.info('End of pipeline.')
+    logger.info('End of pipeline.')
 
 if __name__ == "__main__":
     main()
