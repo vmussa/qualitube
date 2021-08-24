@@ -2,7 +2,7 @@ import requests
 import json
 import pandas as pd
 from configparser import ConfigParser
-import logging
+from .log import logger
 from .exceptions import QualitubeException
 
 
@@ -24,7 +24,7 @@ class Videos:
         try:
             parsed = item[key]
         except KeyError:
-            logging.warn(
+            logger.warn(
                 f"YouTube Data API v3 does not provide the `{key}` parameter fo"
                 f"r the requested video. Setting it as `None`"
             )
@@ -60,7 +60,7 @@ class Videos:
                 'video_favorite_count': self._try_parse(item['statistics'], 'favoriteCount'),
                 'video_comment_count': self._try_parse(item['statistics'], 'commentCount')
             })
-            logging.info(f"Got Video -> id: {item['id']} title: {item['snippet']['title']}")
+            logger.info(f"Got Video -> id: {item['id']} title: {item['snippet']['title']}")
 
         try:
             next_page_token = raw["nextPageToken"]
