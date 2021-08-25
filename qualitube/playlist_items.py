@@ -2,11 +2,14 @@ import requests
 import json
 import pandas as pd
 from configparser import ConfigParser
-import logging
+from .log import logger
+from .exceptions import QualitubeException
+
 
 config = ConfigParser()
 config.read("config.ini")
 API_KEY = config['credentials']['api_key']
+
 
 class PlaylistItems:
     """
@@ -16,22 +19,43 @@ class PlaylistItems:
     def __init__(self, playlist_id, api_key=API_KEY):
         self.playlist_id = playlist_id
         self.api_key = api_key
+
+    def _try_parse(self, item, key):
+        try:
+            parsed = item[key]
+        except KeyError:
+            logger.warn(
+                f"YouTube Data API v3 does not provide the `{key}` parameter fo"
+                f"r the requested playlist item. Setting it as `None`"
+            )
+            parsed = None
+        return parsed
     
     def _parse_response(self, data):
         """Parses the API 'PlaylistItems: list' endpoint's JSON
         response for the retrieval of video metadata."""
         raw = json.loads(data)
-        items = raw["items"]
+        
+        try:
+            items = raw["items"]
+        except KeyError:
+            if "error" in raw.keys():
+                raise QualitubeException(
+                    f"\nAre you sure you set qualitube's config.ini file correctly?"
+                    f"\nYou are getting the following error from YouTube's API response:"
+                    f"\n\t{raw}"
+                )
+            raise
 
         parsed = []
         for item in items:
             parsed.append({
-                'id': item['contentDetails']['videoId'],
-                'title': item['snippet']['title'],
-                'description': item['snippet']['description'],
-                'published_at': item['snippet']['publishedAt']
+                'id': self._try_parse(item['contentDetails'], 'videoId'),
+                'title': self._try_parse(item['snippet'], 'title'),
+                'description': self._try_parse(item['snippet'], 'description'),
+                'published_at': self._try_parse(item['snippet'], 'publishedAt')
             })
-            logging.info(f"Got PlaylistItem -> id: {item['id']} / title: {item['snippet']['title']}")
+            logger.info(f"Got PlaylistItem -> id: {item['id']} / title: {item['snippet']['title']}")
         try:
             next_page_token = raw["nextPageToken"]
         except KeyError:

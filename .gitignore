@@ -3,3 +3,4 @@ config.ini
 *.log
 .vscode
 __pycache__
+dist/
